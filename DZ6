@@ -1,0 +1,50 @@
+from datetime import datetime
+import pytz
+
+WHITE = "\033[00m"
+RED = "\033[1;31m"
+GREEN = "\033[0;92m"
+
+class Account:
+    def __init__(self, name, balance):
+        self.name = name
+        self.balance = balance
+        self.history = []
+
+    @staticmethod
+    def _get_local_time():
+        return pytz.utc.localize(datetime.now())
+
+    def deposit(self, amount):
+        self.balance += amount
+        self.show_balance()
+        self.history.append([amount, self._get_local_time()])
+
+    def withdraw(self, amount):
+        if self.balance > amount:
+            self.balance -= amount
+            print(f"Ваш баланс был уменьшен на {amount}.")
+            self.show_balance()
+            self.history.append([-amount, self._get_local_time()])
+        else:
+            print("Недостаточно денег")
+            self.show_balance()
+    def show_history(self):
+        print("История операций:")
+        for amount, date in self.history:
+            if amount > 0:
+                transaction = 'deposited'
+                color = GREEN
+            else:
+                transaction = 'withdrawn'
+                color = RED
+            print(f"{color}{amount}{WHITE} {transaction} at {date.astimezone()}")
+
+    def show_balance(self):
+        print(f"Ваш баланс: {self.balance}")
+
+a = Account('Alex', 0)
+#a.deposit(100)
+#a.show_balance()
+#a.withdraw(50)
+#a.show_history()
